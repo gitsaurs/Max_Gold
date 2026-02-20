@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAX GOLD — Premium Cash for Gold</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0D080;
+    --gold-dark: #8B6914;
+    --black: #050505;
+    --dark: #0A0A0A;
+    --dark2: #111111;
+    --dark3: #1A1A1A;
+    --white: #F5F0E8;
+    --gray: #888880;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+    mix-blend-mode: difference;
+  }
+  .cursor-follower {
+    position: fixed;
+    width: 40px; height: 40px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.6;
+  }
+  body:has(a:hover) .cursor-follower,
+  body:has(button:hover) .cursor-follower { transform: translate(-50%, -50%) scale(2); opacity: 0.3; }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9000;
+    opacity: 0.4;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 28px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mix-blend-mode: normal;
+  }
+  nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(5,5,5,0.95), transparent);
+    pointer-events: none;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-logo span { color: var(--white); }
+  .nav-links {
+    display: flex;
+    gap: 48px;
+    list-style: none;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--white);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    border: 1px solid var(--gold);
+    color: var(--gold) !important;
+    padding: 10px 24px;
+    opacity: 1 !important;
+    transition: all 0.3s !important;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--black) !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* HERO */
+  #hero {
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(201,168,76,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 50%),
+      var(--black);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    padding: 0 60px;
+    max-width: 900px;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 40px;
+    opacity: 0;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 12vw, 90px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+  .hero-title .line {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  .hero-title .gold-line { color: var(--gold); font-style: italic; }
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(245,240,232,0.6);
+    margin-bottom: 60px;
+    opacity: 0;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    opacity: 0;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--black);
+    padding: 18px 44px;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--gold-light);
+    transition: left 0.4s ease;
+  }
+  .btn-primary:hover::before { left: 0; }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-secondary {
+    color: var(--white);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-secondary::after { content: '→'; font-size: 16px; transition: transform 0.3s; }
+  .btn-secondary:hover { opacity: 1; }
+  .btn-secondary:hover::after { transform: translateX(6px); }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 50px;
+    right: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+  }
+  .hero-scroll-line {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    50.1% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  .hero-stats {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    opacity: 0;
+  }
+  .stat-item { text-align: right; }
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+  .stat-divider { width: 40px; height: 1px; background: rgba(201,168,76,0.3); margin-left: auto; margin-top: 4px; }
+
+  /* MARQUEE */
+  .marquee-section {
+    padding: 24px 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    background: rgba(201,168,76,0.03);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 60px;
+    animation: marquee 20s linear infinite;
+    width: max-content;
+  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    opacity: 0.6;
+    white-space: nowrap;
+  }
+  .marquee-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; }
+
+  /* ABOUT */
+  #about {
+    padding: 160px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  #about::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 50%; height: 100%;
+    background: linear-gradient(to right, rgba(201,168,76,0.03), transparent);
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--gold);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    align-items: center;
+  }
+  .about-left {}
+  .about-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 32px;
+  }
+  .about-title em { font-style: italic; color: var(--gold); }
+  .about-text {
+    font-size: 15px;
+    line-height: 1.9;
+    color: rgba(245,240,232,0.6);
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+  .about-image-wrap {
+    position: relative;
+  }
+  .about-img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    display: block;
+    background: var(--dark3);
+  }
+  .about-img-placeholder {
+    width: 100%;
+    aspect-ratio: 4/5;
+    background: 
+      linear-gradient(135deg, var(--dark3) 0%, var(--dark2) 50%, rgba(201,168,76,0.05) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-img-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(201,168,76,0.02) 20px, rgba(201,168,76,0.02) 21px);
+  }
+  .gold-circle {
+    width: 120px; height: 120px;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-align: center;
+    line-height: 1.4;
+    position: relative;
+    z-index: 1;
+  }
+  .about-badge {
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 120px; height: 120px;
+    background: var(--gold);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .about-badge-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--black);
+    line-height: 1;
+  }
+  .about-badge-text {
+    font-size: 8px;
+    color: var(--black);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.3;
+    padding: 0 8px;
+  }
+  .about-frame {
+    position: absolute;
+    top: -20px; right: -20px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    border: 1px solid rgba(201,168,76,0.2);
+    pointer-events: none;
+  }
+
+  /* PROCESS */
+  #process {
+    padding: 160px 60px;
+    background: var(--dark2);
+    position: relative;
+    overflow: hidden;
+  }
+  .process-header {
+    text-align: center;
+    margin-bottom: 100px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(50px, 7vw, 100px);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  .section-title-gold { color: var(--gold); }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .process-step {
+    background: var(--dark3);
+    padding: 60px 48px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+  .process-step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .process-step:hover { background: rgba(201,168,76,0.04); }
+  .process-step:hover::before { transform: scaleX(1); }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(201,168,76,0.08);
+    line-height: 1;
+    position: absolute;
+    top: 20px; right: 24px;
+    transition: color 0.4s;
+  }
+  .process-step:hover .step-num { color: rgba(201,168,76,0.15); }
+  .step-icon {
+    width: 48px; height: 48px;
+    border: 1px solid rgba(201,168,76,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    font-size: 20px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .process-step:hover .step-icon { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    color: var(--white);
+  }
+  .step-desc {
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.5);
+    font-weight: 300;
+  }
+
+  /* LIVE GOLD PRICE */
+  #goldprice {
+    padding: 100px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  #goldprice::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 80% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+  }
+  .price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .price-display {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  .price-label {
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .live-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 12vw, 160px);
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    position: relative;
+  }
+  .live-price-unit {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: rgba(245,240,232,0.5);
+    font-style: italic;
+    display: block;
+    margin-top: 8px;
+  }
+  .price-badges {
+    display: flex;
+    gap: 3px;
+  }
+  .purity-badge {
+    padding: 20px 32px;
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.1);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 140px;
+  }
+  .purity-badge:hover,
+  .purity-badge.active {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .purity-badge:hover .pb-karat,
+  .purity-badge.active .pb-karat { color: var(--black); }
+  .purity-badge:hover .pb-price,
+  .purity-badge.active .pb-price { color: rgba(0,0,0,0.7); }
+  .pb-karat {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    display: block;
+    transition: color 0.3s;
+  }
+  .pb-price {
+    font-size: 12px;
+    color: rgba(245,240,232,0.5);
+    transition: color 0.3s;
+  }
+
+  /* GALLERY */
+  #gallery {
+    padding: 160px 60px;
+    background: var(--dark);
+    position: relative;
+    overflow: hidden;
+  }
+  .gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 80px;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 3px;
+    height: 700px;
+  }
+  .gallery-item {
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+  .gallery-item:nth-child(1) { grid-column: span 5; grid-row: span 2; }
+  .gallery-item:nth-child(2) { grid-column: span 4; grid-row: span 1; }
+  .gallery-item:nth-child(3) { grid-column: span 3; grid-row: span 2; }
+  .gallery-item:nth-child(4) { grid-column: span 4; grid-row: span 1; }
+  .gallery-item:nth-child(5) { grid-column: span 3; grid-row: span 1; }
+  .gallery-item:nth-child(6) { grid-column: span 4; grid-row: span 1; }
+
+  .gallery-bg {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .gallery-item:hover .gallery-bg { transform: scale(1.08); }
+  .gallery-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(5,5,5,0.8) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    display: flex;
+    align-items: flex-end;
+    padding: 30px;
+  }
+  .gallery-item:hover .gallery-overlay { opacity: 1; }
+  .gallery-caption {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--white);
+    font-style: italic;
+  }
+
+  /* Gold jewelry SVG placeholders */
+  .g-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .g-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    position: relative;
+  }
+  .g1 { background: linear-gradient(135deg, #1a1400 0%, #2a1f00 40%, #1a1000 100%); }
+  .g2 { background: linear-gradient(135deg, #120e00 0%, #1f1800 50%, #2a2000 100%); }
+  .g3 { background: linear-gradient(135deg, #0e0b00 0%, #1a1400 60%, #251b00 100%); }
+  .g4 { background: linear-gradient(135deg, #1a1200 0%, #0e0900 50%, #1f1500 100%); }
+  .g5 { background: linear-gradient(135deg, #251a00 0%, #1a1200 50%, #0e0800 100%); }
+  .g6 { background: linear-gradient(135deg, #120c00 0%, #1f1500 50%, #2a1e00 100%); }
+  .g-shine {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 30%, rgba(201,168,76,0.2) 0%, transparent 60%);
+  }
+  .g-icon { font-size: 80px; filter: drop-shadow(0 0 30px rgba(201,168,76,0.4)); position: relative; z-index: 1; }
+  .g-label {
+    position: absolute;
+    bottom: 16px; left: 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    font-style: italic;
+  }
+
+  /* SERVICES */
+  #services {
+    padding: 160px 60px;
+    position: relative;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    margin-top: 80px;
+  }
+  .service-card {
+    background: var(--dark2);
+    padding: 50px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s;
+  }
+  .service-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .service-card:hover::after { transform: scaleX(1); }
+  .service-icon {
+    font-size: 36px;
+    margin-bottom: 28px;
+    display: block;
+  }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 14px;
+  }
+  .service-desc {
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.5);
+    font-weight: 300;
+  }
+  .service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    transition: gap 0.3s;
+  }
+  .service-link:hover { gap: 14px; }
+
+  /* ACHIEVEMENTS */
+  #achievements {
+    padding: 120px 60px;
+    background: var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+  #achievements::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(0,0,0,0.03) 30px, rgba(0,0,0,0.03) 31px);
+  }
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    position: relative;
+    z-index: 1;
+  }
+  .achievement-item {
+    background: rgba(0,0,0,0.08);
+    padding: 60px 40px;
+    text-align: center;
+    transition: background 0.3s;
+  }
+  .achievement-item:hover { background: rgba(0,0,0,0.15); }
+  .achievement-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: var(--black);
+    line-height: 1;
+    display: block;
+  }
+  .achievement-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.6);
+    font-weight: 600;
+    margin-top: 8px;
+    display: block;
+  }
+
+  /* WHY CHOOSE US */
+  #why {
+    padding: 160px 60px;
+    background: var(--dark2);
+    position: relative;
+    overflow: hidden;
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    align-items: center;
+    margin-top: 80px;
+  }
+  .why-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+  }
+  .why-feature {
+    background: var(--dark3);
+    padding: 32px 28px;
+    border-left: 3px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .why-feature:hover {
+    border-left-color: var(--gold);
+    background: rgba(201,168,76,0.03);
+  }
+  .why-feature-icon { font-size: 24px; margin-bottom: 12px; display: block; }
+  .why-feature-name {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    line-height: 1.4;
+  }
+  .why-visual {
+    position: relative;
+  }
+  .why-big-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(100px, 15vw, 200px);
+    color: rgba(201,168,76,0.06);
+    line-height: 0.9;
+    position: absolute;
+    top: -40px;
+    right: -20px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .why-card {
+    background: var(--dark3);
+    padding: 60px;
+    position: relative;
+    z-index: 1;
+  }
+  .why-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 300;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+  .why-card-title em { color: var(--gold); font-style: italic; }
+  .why-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .why-list li {
+    font-size: 13px;
+    color: rgba(245,240,232,0.6);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  .why-list li::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* TESTIMONIALS */
+  #testimonials {
+    padding: 160px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  #testimonials::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 70%);
+  }
+  .testimonials-header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+  .testimonials-track-wrap {
+    overflow: hidden;
+    position: relative;
+  }
+  .testimonials-track {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .testimonial-card {
+    min-width: calc(33.333% - 16px);
+    background: var(--dark2);
+    padding: 48px;
+    position: relative;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+  .t-stars {
+    color: var(--gold);
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 4px;
+  }
+  .t-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.8);
+    margin-bottom: 32px;
+  }
+  .t-author {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .t-avatar {
+    width: 44px; height: 44px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--black);
+    flex-shrink: 0;
+  }
+  .t-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--white);
+  }
+  .t-source {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+  .t-quote-mark {
+    position: absolute;
+    top: 32px;
+    right: 40px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120px;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .t-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 48px;
+  }
+  .t-btn {
+    width: 48px; height: 48px;
+    border: 1px solid rgba(201,168,76,0.3);
+    background: transparent;
+    color: var(--gold);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .t-btn:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
+  /* FAQ */
+  #faq {
+    padding: 160px 60px;
+    background: var(--dark2);
+  }
+  .faq-container {
+    max-width: 800px;
+    margin: 80px auto 0;
+  }
+  .faq-item {
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 0;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--white);
+    transition: color 0.3s;
+    gap: 20px;
+  }
+  .faq-q:hover { color: var(--gold); }
+  .faq-icon {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: all 0.3s;
+    font-family: monospace;
+  }
+  .faq-item.open .faq-icon { background: var(--gold); color: var(--black); transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.5);
+    font-weight: 300;
+  }
+  .faq-item.open .faq-a {
+    max-height: 200px;
+    padding-bottom: 28px;
+  }
+
+  /* LOCATIONS */
+  #locations {
+    padding: 160px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .locations-bg-text {
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20vw;
+    color: rgba(201,168,76,0.03);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: 0.1em;
+  }
+  .locations-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    margin-top: 80px;
+  }
+  .location-card {
+    background: var(--dark2);
+    padding: 36px 32px;
+    position: relative;
+    border-top: 3px solid transparent;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .location-card:hover {
+    border-top-color: var(--gold);
+    transform: translateY(-4px);
+  }
+  .loc-city {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .loc-addr {
+    font-size: 12px;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.45);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+  .loc-phone {
+    font-size: 12px;
+    color: rgba(245,240,232,0.6);
+    letter-spacing: 0.05em;
+  }
+  .loc-dot {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(201,168,76,0.6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(201,168,76,0.6); }
+    50% { box-shadow: 0 0 24px rgba(201,168,76,0.9), 0 0 40px rgba(201,168,76,0.3); }
+  }
+
+  /* CTA SECTION */
+  #cta {
+    padding: 160px 60px;
+    background: var(--dark2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 50% 80% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%);
+  }
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 9vw, 140px);
+    letter-spacing: 0.05em;
+    line-height: 0.9;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+  }
+  .cta-title span { color: var(--gold); }
+  .cta-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 1;
+  }
+  .cta-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  .cta-phone {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 20px 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .cta-phone:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    padding: 80px 60px 40px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 80px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    display: block;
+    margin-bottom: 20px;
+    text-decoration: none;
+  }
+  .footer-tagline {
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.4);
+    font-weight: 300;
+    max-width: 280px;
+  }
+  .footer-heading {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .footer-links a {
+    font-size: 13px;
+    color: rgba(245,240,232,0.4);
+    text-decoration: none;
+    transition: color 0.3s;
+    font-weight: 300;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+    font-size: 11px;
+    color: rgba(245,240,232,0.3);
+    letter-spacing: 0.05em;
+  }
+
+  /* LOADING SCREEN */
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+  }
+  .loader-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 60px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    overflow: hidden;
+  }
+  .loader-logo-inner { display: block; transform: translateY(100%); }
+  .loader-bar-wrap {
+    width: 200px;
+    height: 1px;
+    background: rgba(201,168,76,0.2);
+    overflow: hidden;
+  }
+  .loader-bar {
+    height: 100%;
+    background: var(--gold);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+  .loader-percent {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    color: rgba(201,168,76,0.5);
+  }
+
+  /* MOBILE MENU BURGER */
+  .burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 1;
+    position: relative;
+  }
+  .burger span { width: 28px; height: 1px; background: var(--gold); transition: all 0.3s; }
+
+  /* HORIZONTAL TICKER FOR SERVICES */
+  .feature-ticks {
+    display: flex;
+    gap: 40px;
+    margin-top: 60px;
+    flex-wrap: wrap;
+  }
+  .feature-tick {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.5);
+  }
+  .feature-tick::before {
+    content: '◆';
+    font-size: 8px;
+    color: var(--gold);
+  }
+
+  @media (max-width: 1024px) {
+    nav { padding: 20px 30px; }
+    .nav-links { display: none; }
+    .burger { display: flex; }
+    #hero, #about, #process, #goldprice, #gallery, #services, #achievements, #why, #testimonials, #faq, #locations, #cta, footer { padding-left: 30px; padding-right: 30px; }
+    .hero-stats { display: none; }
+    .hero-title { font-size: 70px; }
+    .about-grid, .why-grid { grid-template-columns: 1fr; gap: 60px; }
+    .process-steps, .services-grid, .achievements-grid { grid-template-columns: 1fr 1fr; }
+    .locations-grid { grid-template-columns: 1fr 1fr; }
+    .testimonial-card { min-width: calc(100% - 0px); }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .gallery-grid { height: auto; grid-template-columns: 1fr 1fr; }
+    .gallery-item { grid-column: span 1 !important; grid-row: span 1 !important; aspect-ratio: 1; }
+  }
+  @media (max-width: 640px) {
+    .process-steps, .services-grid, .achievements-grid, .locations-grid { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .cta-actions { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursorFollower"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo"><span class="loader-logo-inner" id="loaderLogoText">MAX GOLD</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+  <div class="loader-percent" id="loaderPercent">0%</div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">MAX<span>GOLD</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#process">How It Works</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#cta" class="nav-cta">Get Quote</a></li>
+  </ul>
+  <div class="burger" id="burger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag" id="heroTag">Since 1990 — Chennai's Premier Gold Buyer</div>
+    <h1 class="hero-title">
+      <span class="line">SELL YOUR</span>
+      <span class="line gold-line">GOLD,</span>
+      <span class="line">GET INSTANT</span>
+      <span class="line gold-line">CASH.</span>
+    </h1>
+    <p class="hero-subtitle" id="heroSubtitle">
+      Trusted by 8 lakh+ customers for over 30 years. 
+      We offer the highest market rates with complete transparency.
+    </p>
+    <div class="hero-actions" id="heroActions">
+      <a href="#cta" class="btn-primary"><span>Get Free Quote</span></a>
+      <a href="#process" class="btn-secondary">How it works</a>
+    </div>
+  </div>
+  <div class="hero-stats" id="heroStats">
+    <div class="stat-item">
+      <span class="stat-number" data-target="8">0</span><span class="stat-number">L+</span>
+      <p class="stat-label">Happy Customers</p>
+      <div class="stat-divider"></div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number" data-target="200">0</span><span class="stat-number">+</span>
+      <p class="stat-label">Branches</p>
+      <div class="stat-divider"></div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number" data-target="30">0</span><span class="stat-number">+</span>
+      <p class="stat-label">Years Experience</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item"><span class="marquee-dot"></span> GOLD</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> SILVER</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> DIAMOND</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> PLATINUM</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> JEWELLERY</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> INSTANT CASH</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> DOORSTEP SERVICE</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> BEST RATES</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> GOLD</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> SILVER</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> DIAMOND</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> PLATINUM</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> JEWELLERY</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> INSTANT CASH</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> DOORSTEP SERVICE</div>
+    <div class="marquee-item"><span class="marquee-dot"></span> BEST RATES</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-left" data-gsap="fadeUp">
+      <div class="section-label">About Max Gold</div>
+      <h2 class="about-title">
+        Chennai's Most <em>Trusted</em><br>Gold Buyer<br>Since 1990
+      </h2>
+      <p class="about-text">
+        For over three decades, Max Gold has been the most reliable destination for selling your precious gold, silver, platinum, and diamond jewelry in Chennai. We combine state-of-the-art testing technology with decades of expertise to ensure you receive the best possible price.
+      </p>
+      <p class="about-text">
+        Our commitment to transparency means every evaluation is conducted openly, with no hidden charges or surprise deductions. When we quote a price over the phone, that's exactly what you receive.
+      </p>
+      <div class="feature-ticks">
+        <div class="feature-tick">No service charges</div>
+        <div class="feature-tick">Phone quote guaranteed</div>
+        <div class="feature-tick">5-star rated</div>
+        <div class="feature-tick">Doorstep service</div>
+      </div>
+    </div>
+    <div class="about-image-wrap" data-gsap="fadeUp" data-delay="0.2">
+      <div class="about-img-placeholder">
+        <div class="g-shine"></div>
+        <div class="gold-circle">TESTED &amp;<br>TRUSTED<br>★ ★ ★ ★ ★</div>
+      </div>
+      <div class="about-frame"></div>
+      <div class="about-badge">
+        <span class="about-badge-num">30+</span>
+        <span class="about-badge-text">Years of Excellence</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE GOLD PRICE -->
+<section id="goldprice">
+  <div class="price-container">
+    <div class="section-label" style="justify-content:center; margin-bottom: 16px;">Live Market Rate</div>
+    <div class="price-display">
+      <span class="price-label">Today's Gold Price per Gram</span>
+      <div class="live-price" id="livePrice">₹7,240</div>
+      <span class="live-price-unit">Indian Rupees — Updated Live</span>
+    </div>
+    <div class="price-badges">
+      <div class="purity-badge active" onclick="setPurity(this, '24K', 7240)">
+        <span class="pb-karat">24K</span>
+        <span class="pb-price">Pure Gold</span>
+      </div>
+      <div class="purity-badge" onclick="setPurity(this, '22K', 6637)">
+        <span class="pb-karat">22K</span>
+        <span class="pb-price">Hallmark</span>
+      </div>
+      <div class="purity-badge" onclick="setPurity(this, '18K', 5430)">
+        <span class="pb-karat">18K</span>
+        <span class="pb-price">Standard</span>
+      </div>
+      <div class="purity-badge" onclick="setPurity(this, '14K', 4228)">
+        <span class="pb-karat">14K</span>
+        <span class="pb-price">Mixed</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="process-header" data-gsap="fadeUp">
+    <div class="section-label" style="justify-content:center;">The Process</div>
+    <h2 class="section-title">SELL YOUR GOLD IN <span class="section-title-gold">6 STEPS</span></h2>
+  </div>
+  <div class="process-steps">
+    <div class="process-step" data-gsap="fadeUp" data-delay="0">
+      <span class="step-num">01</span>
+      <div class="step-icon">📞</div>
+      <h3 class="step-title">Contact Us</h3>
+      <p class="step-desc">Call us at 044-4545 4545 or WhatsApp +91 83004 00500. Our experts are available 7 days a week to assist you.</p>
+    </div>
+    <div class="process-step" data-gsap="fadeUp" data-delay="0.1">
+      <span class="step-num">02</span>
+      <div class="step-icon">📊</div>
+      <h3 class="step-title">Get Quote</h3>
+      <p class="step-desc">Receive a comprehensive estimate based on live market rates for your gold, silver, and diamond jewelry — instantly over the phone.</p>
+    </div>
+    <div class="process-step" data-gsap="fadeUp" data-delay="0.2">
+      <span class="step-num">03</span>
+      <div class="step-icon">🔍</div>
+      <h3 class="step-title">Transparent Testing</h3>
+      <p class="step-desc">Our advanced gold testing machines provide precise purity analysis. Every step is conducted in front of you with complete openness.</p>
+    </div>
+    <div class="process-step" data-gsap="fadeUp" data-delay="0.1">
+      <span class="step-num">04</span>
+      <div class="step-icon">🏢</div>
+      <h3 class="step-title">Visit Our Branch</h3>
+      <p class="step-desc">Walk into any of our 200+ branches across Tamil Nadu to receive the exact value quoted by our team — no surprises.</p>
+    </div>
+    <div class="process-step" data-gsap="fadeUp" data-delay="0.2">
+      <span class="step-num">05</span>
+      <div class="step-icon">🚗</div>
+      <h3 class="step-title">Doorstep Service</h3>
+      <p class="step-desc">Prefer to stay home? Our trained representatives visit your location, verify the gold, and complete payment on the spot.</p>
+    </div>
+    <div class="process-step" data-gsap="fadeUp" data-delay="0.3">
+      <span class="step-num">06</span>
+      <div class="step-icon">💰</div>
+      <h3 class="step-title">Instant Cash</h3>
+      <p class="step-desc">Receive your payment immediately — cash in hand or direct bank transfer within 30 minutes. Zero waiting, zero hassle.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="gallery-header" data-gsap="fadeUp">
+    <div>
+      <div class="section-label">Our Gallery</div>
+      <h2 class="section-title">PRECIOUS <span class="section-title-gold">METALS</span></h2>
+    </div>
+    <p style="font-family:'Cormorant Garamond',serif; font-size:18px; font-style:italic; color:rgba(245,240,232,0.4); max-width:300px; text-align:right; line-height:1.6;">
+      We buy all types of precious jewelry, tested with the highest accuracy
+    </p>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <div class="gallery-bg g-placeholder g1">
+        <div class="g-shine"></div>
+        <span class="g-icon">💍</span>
+        <span class="g-label">Gold Rings</span>
+      </div>
+      <div class="gallery-overlay"><div class="gallery-caption">Gold Rings & Bands</div></div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg g-placeholder g2">
+        <div class="g-shine"></div>
+        <span class="g-icon">📿</span>
+        <span class="g-label">Necklaces</span>
+      </div>
+      <div class="gallery-overlay"><div class="gallery-caption">Gold Necklaces</div></div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg g-placeholder g3">
+        <div class="g-shine"></div>
+        <span class="g-icon">👑</span>
+        <span class="g-label">Crowns & Headpieces</span>
+      </div>
+      <div class="gallery-overlay"><div class="gallery-caption">Antique Ornaments</div></div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg g-placeholder g4">
+        <div class="g-shine"></div>
+        <span class="g-icon">💎</span>
+        <span class="g-label">Diamond Jewelry</span>
+      </div>
+      <div class="gallery-overlay"><div class="gallery-caption">Diamond Jewelry</div></div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg g-placeholder g5">
+        <div class="g-shine"></div>
+        <span class="g-icon">🪙</span>
+        <span class="g-label">Gold Coins & Bars</span>
+      </div>
+      <div class="gallery-overlay"><div class="gallery-caption">Gold Coins & Bars</div></div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg g-placeholder g6">
+        <div class="g-shine"></div>
+        <span class="g-icon">✨</span>
+        <span class="g-label">Silver Jewelry</span>
+      </div>
+      <div class="gallery-overlay"><div class="gallery-caption">Silver & Platinum</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div data-gsap="fadeUp">
+    <div class="section-label">What We Buy</div>
+    <h2 class="section-title">OUR <span class="section-title-gold">SERVICES</span></h2>
+  </div>
+  <div class="services-grid">
+    <div class="service-card" data-gsap="fadeUp" data-delay="0">
+      <span class="service-icon">🥇</span>
+      <h3 class="service-name">Gold Jewelry</h3>
+      <p class="service-desc">All karats from 9K to 24K. Rings, necklaces, bangles, earrings, chains — we buy everything at the best market price.</p>
+      <a href="#cta" class="service-link">Get Quote →</a>
+    </div>
+    <div class="service-card" data-gsap="fadeUp" data-delay="0.1">
+      <span class="service-icon">💎</span>
+      <h3 class="service-name">Diamond Jewelry</h3>
+      <p class="service-desc">Certified diamond evaluation by our expert gemologists. We assess cut, clarity, color, and carat for a fair market price.</p>
+      <a href="#cta" class="service-link">Get Quote →</a>
+    </div>
+    <div class="service-card" data-gsap="fadeUp" data-delay="0.2">
+      <span class="service-icon">🪙</span>
+      <h3 class="service-name">Gold Coins & Bars</h3>
+      <p class="service-desc">Whether it's temple gold coins, RBI coins, or investment bullion — we provide competitive rates on all gold coins and bars.</p>
+      <a href="#cta" class="service-link">Get Quote →</a>
+    </div>
+    <div class="service-card" data-gsap="fadeUp" data-delay="0.3">
+      <span class="service-icon">🏛️</span>
+      <h3 class="service-name">Pledge Gold Takeover</h3>
+      <p class="service-desc">Already pledged your gold elsewhere at a low rate? We take over your gold pledge and offer you better terms and higher value.</p>
+      <a href="#cta" class="service-link">Learn More →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="achievements-grid">
+    <div class="achievement-item">
+      <span class="achievement-num" data-count="800000" data-suffix="+">8L+</span>
+      <span class="achievement-label">Satisfied Customers</span>
+    </div>
+    <div class="achievement-item">
+      <span class="achievement-num" data-count="200" data-suffix="+">200+</span>
+      <span class="achievement-label">Branches Across TN</span>
+    </div>
+    <div class="achievement-item">
+      <span class="achievement-num" data-count="30" data-suffix="+">30+</span>
+      <span class="achievement-label">Years of Trust</span>
+    </div>
+    <div class="achievement-item">
+      <span class="achievement-num" data-count="5" data-suffix="★">5★</span>
+      <span class="achievement-label">Google Rating</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section id="why">
+  <div data-gsap="fadeUp">
+    <div class="section-label">Why Max Gold</div>
+    <h2 class="section-title">THE <span class="section-title-gold">DIFFERENCE</span></h2>
+  </div>
+  <div class="why-grid">
+    <div class="why-features" data-gsap="fadeUp">
+      <div class="why-feature">
+        <span class="why-feature-icon">🚫</span>
+        <div class="why-feature-name">No Service Charges</div>
+      </div>
+      <div class="why-feature">
+        <span class="why-feature-icon">🔍</span>
+        <div class="why-feature-name">Transparent Service</div>
+      </div>
+      <div class="why-feature">
+        <span class="why-feature-icon">⚡</span>
+        <div class="why-feature-name">Quick Response</div>
+      </div>
+      <div class="why-feature">
+        <span class="why-feature-icon">📈</span>
+        <div class="why-feature-name">Best Market Rates</div>
+      </div>
+      <div class="why-feature">
+        <span class="why-feature-icon">📱</span>
+        <div class="why-feature-name">Phone Quote Guaranteed</div>
+      </div>
+      <div class="why-feature">
+        <span class="why-feature-icon">🚗</span>
+        <div class="why-feature-name">Doorstep Service</div>
+      </div>
+      <div class="why-feature">
+        <span class="why-feature-icon">👨‍💼</span>
+        <div class="why-feature-name">Expert Team</div>
+      </div>
+      <div class="why-feature">
+        <span class="why-feature-icon">⭐</span>
+        <div class="why-feature-name">5-Star Rated Buyer</div>
+      </div>
+    </div>
+    <div class="why-visual" data-gsap="fadeUp" data-delay="0.2">
+      <div class="why-big-text">GOLD</div>
+      <div class="why-card">
+        <h3 class="why-card-title">We don't just buy gold —<br>we <em>value</em> your trust</h3>
+        <p style="font-size:14px; line-height:1.9; color:rgba(245,240,232,0.5); font-weight:300; margin-bottom:32px;">
+          At Max Gold, we understand that selling your jewelry is a significant decision. Our 30+ years of experience means you can trust us to provide honest evaluations and fair prices — every single time.
+        </p>
+        <ul class="why-list">
+          <li>Advanced gold testing machines for precise purity analysis</li>
+          <li>Final quote always matches the phone estimate — guaranteed</li>
+          <li>Completely safe, secure, and insured transaction process</li>
+          <li>Payment processed within 30 minutes — cash or bank transfer</li>
+          <li>200+ branches in Tamil Nadu — we're always nearby</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="testimonials-header" data-gsap="fadeUp">
+    <div class="section-label" style="justify-content:center;">Customer Reviews</div>
+    <h2 class="section-title">2,157+ <span class="section-title-gold">HAPPY</span> CUSTOMERS</h2>
+  </div>
+  <div class="testimonials-track-wrap">
+    <div class="testimonials-track" id="testimonialTrack">
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">"Excellent hospitality and got a great price for the gold sold. If you're looking for old gold buyers in Chennai, I strongly recommend Max Gold. The process was seamless."</p>
+        <div class="t-author">
+          <div class="t-avatar">H</div>
+          <div><div class="t-name">Harini R</div><div class="t-source">Google Reviews</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">"My experience at Max Gold was outstanding. The staff's friendliness and expertise made the entire procedure easy and straightforward. Highly professional team."</p>
+        <div class="t-author">
+          <div class="t-avatar">A</div>
+          <div><div class="t-name">Aravinth S</div><div class="t-source">Google Reviews</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">"I had a wonderful experience selling my old gold. Highly recommended for anyone looking to sell at the best market price with complete confidence and peace of mind."</p>
+        <div class="t-author">
+          <div class="t-avatar">M</div>
+          <div><div class="t-name">Mala</div><div class="t-source">Google Reviews</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">"The way the staff explains everything is incredibly comforting. Max Gold is highly recommended for those looking for instant cash for gold jewellery with zero stress."</p>
+        <div class="t-author">
+          <div class="t-avatar">M</div>
+          <div><div class="t-name">Monika</div><div class="t-source">Google Reviews</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">"Genuinely impressed with the service at Max Gold T-Nagar. The hospitality and process is very simple. They offer the absolute best price in Chennai's cash for gold market."</p>
+        <div class="t-author">
+          <div class="t-avatar">S</div>
+          <div><div class="t-name">Sadha William</div><div class="t-source">Google Reviews</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">"Without a doubt, Chennai's top old gold buyer. Unparalleled ability to appraise antique gold at a great price. Their expertise made the whole process smooth and trustworthy."</p>
+        <div class="t-author">
+          <div class="t-avatar">A</div>
+          <div><div class="t-name">Anitha</div><div class="t-source">Google Reviews</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="t-controls">
+    <button class="t-btn" id="tPrev">←</button>
+    <button class="t-btn" id="tNext">→</button>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="text-center" data-gsap="fadeUp" style="text-align:center;">
+    <div class="section-label" style="justify-content:center;">Common Questions</div>
+    <h2 class="section-title">FREQUENTLY <span class="section-title-gold">ASKED</span></h2>
+  </div>
+  <div class="faq-container">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Which is the best place to sell gold in Chennai?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Max Gold is widely recognized as Chennai's premier gold buyer, with 200+ branches across Tamil Nadu, over 30 years of experience, and 8 lakh+ satisfied customers. Our transparent pricing and no-service-charge policy ensures you always receive the best value.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How can I sell gold for cash?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Simply call us at 044-4545 4545, get a free quote over the phone, then either visit any of our branches or opt for our doorstep service. We test your gold, confirm the agreed price, and pay you instantly — all within 30 minutes.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How much will I get if I sell my gold in Chennai?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">The price is based on current market rates and the purity of your gold. Check our live price ticker above for today's rates. We guarantee the quote given over the phone — you will receive exactly that amount when you visit our branch.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Will my gold ornaments get damaged during testing?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Absolutely not. We use advanced XRF (X-ray fluorescence) gold testing machines that determine purity without any physical damage to your jewelry. The process is completely non-destructive and takes only a few minutes.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        What documentation is required to sell gold?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">You only need a valid government-issued photo ID such as Aadhaar card, PAN card, or passport. For transactions above a certain value, additional KYC documents may be required as per RBI guidelines.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Is there a minimum age to sell gold at Max Gold?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Yes, you must be at least 18 years of age to sell gold at Max Gold. This is in compliance with Indian legal requirements for financial transactions.</div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATIONS -->
+<section id="locations">
+  <div class="locations-bg-text">CHENNAI</div>
+  <div data-gsap="fadeUp" style="position:relative;z-index:1;">
+    <div class="section-label">Find Us</div>
+    <h2 class="section-title">OUR <span class="section-title-gold">LOCATIONS</span></h2>
+  </div>
+  <div class="locations-grid" style="position:relative;z-index:1;">
+    <div class="location-card" data-gsap="fadeUp" data-delay="0">
+      <div class="loc-dot"></div>
+      <div class="loc-city">T. Nagar</div>
+      <div class="loc-addr">Prashanth Real Gold Towers, Shop No.6, 8th Floor, North Usman Road, T.Nagar, Chennai – 600 017</div>
+      <div class="loc-phone">+91 81482 25084</div>
+    </div>
+    <div class="location-card" data-gsap="fadeUp" data-delay="0.05">
+      <div class="loc-dot"></div>
+      <div class="loc-city">Anna Nagar</div>
+      <div class="loc-addr">2109/3, Vignesh Flats, 1st Floor, 13th Main Road, Anna Nagar, Chennai – 600 040</div>
+      <div class="loc-phone">+91 96770 35402</div>
+    </div>
+    <div class="location-card" data-gsap="fadeUp" data-delay="0.1">
+      <div class="loc-dot"></div>
+      <div class="loc-city">Velachery</div>
+      <div class="loc-addr">Old No.51, New No.312, Velachery Main Road, Velachery, Chennai – 600 042</div>
+      <div class="loc-phone">+91 82202 94809</div>
+    </div>
+    <div class="location-card" data-gsap="fadeUp" data-delay="0.15">
+      <div class="loc-dot"></div>
+      <div class="loc-city">Porur</div>
+      <div class="loc-addr">No.5, 1st Floor, Shop No. 9A, Arcot Road, Karambakkam, Porur, Chennai – 600 116</div>
+      <div class="loc-phone">+91 81221 15945</div>
+    </div>
+    <div class="location-card" data-gsap="fadeUp" data-delay="0.2">
+      <div class="loc-dot"></div>
+      <div class="loc-city">Tambaram</div>
+      <div class="loc-addr">No.6, GST Road, Tambaram Sanatorium, (Next to Croma) Chennai – 600 047</div>
+      <div class="loc-phone">+91 81223 41656</div>
+    </div>
+    <div class="location-card" data-gsap="fadeUp" data-delay="0.25">
+      <div class="loc-dot"></div>
+      <div class="loc-city">Perambur</div>
+      <div class="loc-addr">No.7, Madhavaram High Road, Chinnaiyan Colony, Perambur, Chennai – 600 011</div>
+      <div class="loc-phone">+91 84382 45452</div>
+    </div>
+    <div class="location-card" data-gsap="fadeUp" data-delay="0.3">
+      <div class="loc-dot"></div>
+      <div class="loc-city">Coimbatore</div>
+      <div class="loc-addr">No.96, 9/13A, 2nd Street, off Avinashi Road, Palanisamy Naidu Colony, Coimbatore – 641014</div>
+      <div class="loc-phone">+91 99528 24545</div>
+    </div>
+    <div class="location-card" data-gsap="fadeUp" data-delay="0.35">
+      <div class="loc-dot"></div>
+      <div class="loc-city">OMR</div>
+      <div class="loc-addr">No.2/80, Old Mahabalipuram Road, Karapakkam, Chennai – 600 097</div>
+      <div class="loc-phone">+91 84380 85894</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <h2 class="cta-title">READY TO SELL<br>YOUR <span>GOLD?</span></h2>
+  <p class="cta-sub">Get an instant quote — no obligations, no hidden charges</p>
+  <div class="cta-actions">
+    <a href="tel:04445454545" class="cta-phone">
+      <span>📞</span> 044 – 4545 4545
+    </a>
+    <a href="https://wa.me/918300400500" class="cta-phone">
+      <span>💬</span> WhatsApp Us
+    </a>
+    <a href="mailto:info@maxgold.co.in" class="btn-primary"><span>Email Us</span></a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="#" class="footer-logo">MAXGOLD</a>
+      <p class="footer-tagline">Chennai's most trusted cash for gold buyer since 1990. Serving 8 lakh+ customers with transparency, integrity, and the best market rates.</p>
+    </div>
+    <div>
+      <div class="footer-heading">Quick Links</div>
+      <ul class="footer-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#process">How It Works</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#services">Services</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Services</div>
+      <ul class="footer-links">
+        <li><a href="#services">Gold Jewelry</a></li>
+        <li><a href="#services">Diamond Jewelry</a></li>
+        <li><a href="#services">Gold Coins & Bars</a></li>
+        <li><a href="#services">Pledge Takeover</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Contact</div>
+      <ul class="footer-links">
+        <li><a href="tel:04445454545">044-4545 4545</a></li>
+        <li><a href="tel:8300400500">8300 400 500</a></li>
+        <li><a href="mailto:info@maxgold.co.in">info@maxgold.co.in</a></li>
+        <li><a href="#locations">View All Branches</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Max Gold. All Rights Reserved. Developed by Netsaurs</span>
+    <span style="color:rgba(201,168,76,0.4); letter-spacing:0.1em;">CHENNAI · TAMIL NADU · INDIA</span>
+  </div>
+</footer>
+
+<script>
+// CUSTOM CURSOR
+const cursor = document.getElementById('cursor');
+const cursorFollower = document.getElementById('cursorFollower');
+let mouseX = 0, mouseY = 0, followerX = 0, followerY = 0;
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+function animateCursor() {
+  followerX += (mouseX - followerX) * 0.12;
+  followerY += (mouseY - followerY) * 0.12;
+  cursorFollower.style.left = followerX + 'px';
+  cursorFollower.style.top = followerY + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// LOADER
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
+const loaderBar = document.getElementById('loaderBar');
+const loaderPercent = document.getElementById('loaderPercent');
+const loaderLogoText = document.getElementById('loaderLogoText');
+
+let pct = 0;
+gsap.to(loaderLogoText, { y: '0%', duration: 0.8, ease: 'power3.out', delay: 0.3 });
+const interval = setInterval(() => {
+  pct += Math.random() * 4 + 1;
+  if (pct >= 100) { pct = 100; clearInterval(interval); }
+  loaderBar.style.width = pct + '%';
+  loaderPercent.textContent = Math.floor(pct) + '%';
+  if (pct >= 100) {
+    setTimeout(() => {
+      gsap.to('#loader', {
+        yPercent: -100,
+        duration: 1,
+        ease: 'expo.inOut',
+        onComplete: () => { document.getElementById('loader').style.display = 'none'; initHeroAnim(); }
+      });
+    }, 400);
+  }
+}, 50);
+
+function initHeroAnim() {
+  const tl = gsap.timeline();
+  tl.to('#heroTag', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+    .to('.hero-title .line', { opacity: 1, y: 0, duration: 0.9, stagger: 0.12, ease: 'expo.out' }, '-=0.4')
+    .to('#heroSubtitle', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4')
+    .to('#heroActions', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4')
+    .to('#heroStats', { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+    .to('#heroScroll', { opacity: 1, duration: 0.6 }, '-=0.3');
+
+  // Animate stat numbers
+  document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+    gsap.to({ val: 0 }, {
+      val: parseInt(el.dataset.target),
+      duration: 2,
+      delay: 1.5,
+      ease: 'power2.out',
+      onUpdate: function() { el.textContent = Math.round(this.targets()[0].val); }
+    });
+  });
+}
+
+// SCROLL ANIMATIONS
+gsap.utils.toArray('[data-gsap="fadeUp"]').forEach(el => {
+  const delay = parseFloat(el.dataset.delay || 0);
+  gsap.fromTo(el, 
+    { opacity: 0, y: 60 },
+    { opacity: 1, y: 0, duration: 1, delay, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+// GALLERY ITEMS
+gsap.utils.toArray('.gallery-item').forEach((item, i) => {
+  gsap.fromTo(item,
+    { opacity: 0, scale: 0.95 },
+    { opacity: 1, scale: 1, duration: 0.8, delay: i * 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '#gallery', start: 'top 70%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+// ACHIEVEMENT COUNTERS
+ScrollTrigger.create({
+  trigger: '#achievements',
+  start: 'top 70%',
+  once: true,
+  onEnter: () => {
+    document.querySelectorAll('.achievement-num[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: target,
+        duration: 2,
+        ease: 'power2.out',
+        onUpdate: function() {
+          const v = Math.round(this.targets()[0].val);
+          el.textContent = v >= 100000 ? (v / 100000).toFixed(0) + 'L' + suffix : v + suffix;
+        }
+      });
+    });
+  }
+});
+
+// NAV SCROLL
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const scroll = window.scrollY;
+  const nav = document.getElementById('navbar');
+  if (scroll > 100) {
+    nav.style.background = 'rgba(5,5,5,0.95)';
+    nav.style.backdropFilter = 'blur(20px)';
+    nav.style.padding = scroll > 200 ? '16px 60px' : '28px 60px';
+  } else {
+    nav.style.background = '';
+    nav.style.backdropFilter = '';
+    nav.style.padding = '28px 60px';
+  }
+  lastScroll = scroll;
+});
+
+// PARALLAX HERO GRID
+gsap.to('.hero-grid', {
+  yPercent: -20,
+  ease: 'none',
+  scrollTrigger: { trigger: '#hero', scrub: true }
+});
+
+// TESTIMONIALS SLIDER
+let tCurrent = 0;
+const tTrack = document.getElementById('testimonialTrack');
+const tCards = tTrack.querySelectorAll('.testimonial-card');
+const tVisible = () => window.innerWidth < 768 ? 1 : 3;
+
+function slideTo(idx) {
+  const max = tCards.length - tVisible();
+  tCurrent = Math.max(0, Math.min(idx, max));
+  const cardW = tCards[0].offsetWidth + 24;
+  tTrack.style.transform = `translateX(-${tCurrent * cardW}px)`;
+}
+
+document.getElementById('tPrev').onclick = () => slideTo(tCurrent - 1);
+document.getElementById('tNext').onclick = () => slideTo(tCurrent + 1);
+
+// Auto-slide testimonials
+setInterval(() => slideTo(tCurrent >= tCards.length - tVisible() ? 0 : tCurrent + 1), 5000);
+
+// FAQ
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// GOLD PRICE SWITCHER
+function setPurity(el, karat, price) {
+  document.querySelectorAll('.purity-badge').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const priceEl = document.getElementById('livePrice');
+  gsap.to({ val: parseInt(priceEl.textContent.replace(/[^\d]/g, '')) }, {
+    val: price,
+    duration: 0.6,
+    ease: 'power2.out',
+    onUpdate: function() { priceEl.textContent = '₹' + Math.round(this.targets()[0].val).toLocaleString('en-IN'); }
+  });
+}
+
+// Simulate price flicker
+setInterval(() => {
+  const priceEl = document.getElementById('livePrice');
+  const curr = parseInt(priceEl.textContent.replace(/[^\d]/g, ''));
+  const delta = (Math.random() - 0.5) * 20;
+  const newVal = curr + Math.round(delta);
+  gsap.to({ val: curr }, {
+    val: newVal, duration: 0.4, ease: 'power1.out',
+    onUpdate: function() { priceEl.textContent = '₹' + Math.round(this.targets()[0].val).toLocaleString('en-IN'); }
+  });
+}, 4000);
+
+// HORIZONTAL SCROLL GALLERY DRAG
+let isDragging = false, startX, scrollLeft;
+const galleryGrid = document.querySelector('.gallery-grid');
+
+// Smooth reveal for marquee text
+gsap.fromTo('.marquee-section', 
+  { opacity: 0 },
+  { opacity: 1, duration: 1, scrollTrigger: { trigger: '.marquee-section', start: 'top 90%' } }
+);
+
+// Gold shimmer on section titles
+gsap.utils.toArray('.section-title-gold').forEach(el => {
+  gsap.to(el, {
+    backgroundPosition: '200% center',
+    duration: 3,
+    ease: 'none',
+    repeat: -1,
+    backgroundImage: 'linear-gradient(90deg, #C9A84C, #F0D080, #C9A84C)',
+    backgroundClip: 'text',
+    webkitBackgroundClip: 'text',
+    color: 'transparent',
+    backgroundSize: '200% auto',
+  });
+});
+
+// Process steps stagger
+gsap.fromTo('.process-step', 
+  { opacity: 0, y: 40 },
+  { opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: 'power2.out',
+    scrollTrigger: { trigger: '#process', start: 'top 60%', toggleActions: 'play none none none' }
+  }
+);
+
+// Service cards
+gsap.fromTo('.service-card',
+  { opacity: 0, y: 30 },
+  { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out',
+    scrollTrigger: { trigger: '#services', start: 'top 70%', toggleActions: 'play none none none' }
+  }
+);
+
+// Location cards
+gsap.fromTo('.location-card',
+  { opacity: 0, scale: 0.96 },
+  { opacity: 1, scale: 1, duration: 0.6, stagger: 0.07, ease: 'power2.out',
+    scrollTrigger: { trigger: '#locations', start: 'top 70%', toggleActions: 'play none none none' }
+  }
+);
+
+// CTA text reveal
+gsap.fromTo('.cta-title',
+  { opacity: 0, y: 60 },
+  { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out',
+    scrollTrigger: { trigger: '#cta', start: 'top 70%', toggleActions: 'play none none none' }
+  }
+);
+
+// WHY section features
+gsap.fromTo('.why-feature',
+  { opacity: 0, x: -20 },
+  { opacity: 1, x: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out',
+    scrollTrigger: { trigger: '#why', start: 'top 70%', toggleActions: 'play none none none' }
+  }
+);
+</script>
+</body>
+</html>
